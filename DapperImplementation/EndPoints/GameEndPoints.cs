@@ -1,4 +1,6 @@
-﻿using DapperImplementation.DataAccess.Layer.Factory;
+﻿using DapperImplementation.BusinessLogic.Layer.Repositories;
+using DapperImplementation.DataAccess.Layer.DAO;
+using DapperImplementation.DataAccess.Layer.Factory;
 
 namespace DapperImplementation.EndPoints
 {
@@ -8,8 +10,13 @@ namespace DapperImplementation.EndPoints
         {
             builder.MapGet("games", async (SqlConnectionFactory sqlConnectionFactory) =>
             {
-                //Game
-            };
+                var connection = sqlConnectionFactory.CreateConnection();
+                DapperDOA dao = new DapperDOA(connection);
+                GameRepository gameRepository = new GameRepository(dao);
+                var games = await gameRepository.GetAllGameAsync();
+
+                return Results.Ok(games);
+            });
         }
     }
 }

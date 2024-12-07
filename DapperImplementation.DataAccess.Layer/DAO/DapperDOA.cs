@@ -1,29 +1,24 @@
 ﻿using Dapper;
-using DapperImplementation.DataAccess.Layer.Factory;
-using System;
-using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DapperImplementation.DataAccess.Layer.DAO
 {
     public class DapperDOA
     {
-        private readonly ISqlConnectionFactory _connectionFactory;
-        public DapperDOA(ISqlConnectionFactory connectionFactory)
+        private readonly SqlConnection _connection;
+        public DapperDOA(SqlConnection connection)
         {
-            _connectionFactory = connectionFactory;
+            _connection = connection;
         }
 
         public async Task<List<T>> LoadDataAsync<T>(string sqlOrProcedure, CommandType commandType, Dictionary<string, object> parameters)
         {
             DynamicParameters dynamicParameters = ToMakeDynamicParameters(parameters);
 
-            using (IDbConnection connection = _connectionFactory.CreateConnection())
+            using (_connection)
             {
-                var rows = await connection.QueryAsync<T>(sqlOrProcedure, dynamicParameters, commandType: commandType);
+                var rows = await _connection.QueryAsync<T>(sqlOrProcedure, dynamicParameters, commandType: commandType);
                 return rows.ToList();
             }
         }
@@ -32,9 +27,9 @@ namespace DapperImplementation.DataAccess.Layer.DAO
         {
             DynamicParameters dynamicParameters = ToMakeDynamicParameters(parameters);
 
-            using (IDbConnection connection = _connectionFactory.CreateConnection())
+            using (_connection)
             {
-                return await connection.ExecuteAsync(sqlOrProcedure, dynamicParameters, commandType: commandType);
+                return await _connection.ExecuteAsync(sqlOrProcedure, dynamicParameters, commandType: commandType);
             }
         }
 

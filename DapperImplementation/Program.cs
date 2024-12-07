@@ -1,5 +1,7 @@
 using DapperImplementation.BusinessLogic.Layer.Repositories;
+using DapperImplementation.DataAccess.Layer.DAO;
 using DapperImplementation.DataAccess.Layer.Factory;
+using DapperImplementation.EndPoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,8 @@ builder.Services.AddSingleton(serviceProvider =>
     return new SqlConnectionFactory(connectionString);
 });
 
-builder.Services.AddScoped<IGameRepository, GameRepository>();
+//builder.Services.AddScoped<IDapperDAO, DapperDOA>();
+//builder.Services.AddScoped<IGameRepository, GameRepository>();
 
 var app = builder.Build();
 
@@ -49,6 +52,8 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+app.MapGameEndPoints();
 
 app.Run();
 

@@ -1,9 +1,16 @@
 ﻿using DapperImplementation.BusinessLogic.Layer.Models;
+using DapperImplementation.DataAccess.Layer.DAO;
 
 namespace DapperImplementation.BusinessLogic.Layer.Repositories
 {
-    public class GameRepository : IGameRepository
+    public class GameRepository
     {
+        private readonly DapperDOA _dao;
+        public GameRepository(DapperDOA dao)
+        {
+            _dao = dao;
+        }
+
         public Task<int> CreateGameAsync(Game game)
         {
             throw new NotImplementedException();
@@ -16,7 +23,9 @@ namespace DapperImplementation.BusinessLogic.Layer.Repositories
 
         public Task<List<Game>> GetAllGameAsync()
         {
-            throw new NotImplementedException();
+            string sql = "select * from GameData";
+            var games = _dao.LoadDataAsync<Game>(sql, System.Data.CommandType.Text, new Dictionary<string, object>());
+            return games;
         }
 
         public Task<int> UpdateGameAsync(Game game)
